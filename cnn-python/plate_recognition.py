@@ -71,4 +71,4 @@ def extract_text_easyocr_smart(image_path):
 
     return final_plate
 
-extract_text_easyocr_smart("C:/Users/HaikalAssyauqi/OneDrive - TSP/Pictures/Screenshots/Screenshot 2025-12-07 134340.png")
+extract_text_easyocr_smart(r"C:\PCD\Tugas4_PemrosesanCitraDigital\cnn-python\input_plate\L_4821_UJ.png")
