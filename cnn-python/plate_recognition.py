@@ -25,7 +25,6 @@ def extract_text_easyocr_smart(image_path):
         h = bbox[2][1] - bbox[0][1]
         max_height = max(max_height, h)
 
-    print(f"Tinggi Teks Maksimum: {max_height}")
 
     height_threshold = max_height * 0.6
     raw_texts = []
@@ -50,12 +49,5 @@ def extract_text_easyocr_smart(image_path):
         final = f"{area} {number} {suffix}".strip()
     else:
         final = "(format tidak cocok)"
-
-    # Visualisasi
-    plt.figure(figsize=(8, 5))
-    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    plt.title(f"OCR: {final}")
-    plt.axis('off')
-    plt.show()
 
     return final
