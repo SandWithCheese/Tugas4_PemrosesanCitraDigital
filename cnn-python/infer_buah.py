@@ -5,6 +5,7 @@ from PIL import Image
 import cv2
 from torchvision import transforms
 import torchvision.transforms.functional as TF
+import os
 
 def conv_block(in_ch, out_ch):
     return nn.Sequential(
@@ -135,7 +136,11 @@ def infer(image_path, model_path, class_names, img_size=(256,256)):
     img_np = np.array(img)
     overlay = cv2.addWeighted(img_np, 0.7, seg_mask, 0.3, 0)
 
-    out_path = "result_overlay.png"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    filename_no_ext = os.path.splitext(os.path.basename(image_path))[0]
+
+    out_path = os.path.join(BASE_DIR, "output_fruits", filename_no_ext + ".png")
     cv2.imwrite(out_path, cv2.cvtColor(overlay, cv2.COLOR_RGB2BGR))
 
     print(f"\nMask overlay disimpan ke: {out_path}")

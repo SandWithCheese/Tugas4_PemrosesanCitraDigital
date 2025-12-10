@@ -11,9 +11,7 @@ from torchvision import transforms
 import torchvision.transforms.functional as TF
 import torch.optim as optim
 
-# =====================================================================
-# Utility: convert COCO polygons → binary mask
-# =====================================================================
+# Mengubah polygon COCO menjadi mask biner
 def polygons_to_mask(polygons, height, width):
     mask = Image.new('L', (width, height), 0)
     draw = ImageDraw.Draw(mask)
@@ -24,10 +22,7 @@ def polygons_to_mask(polygons, height, width):
         draw.polygon(xy, fill=1)
     return np.array(mask, dtype=np.uint8)
 
-
-# =====================================================================
-# DATASET: Load COCO JSON → (image, multi-channel mask, presence vector)
-# =====================================================================
+# Kelas Dataset COCO untuk segmentasi
 class CocoSegDataset(Dataset):
     def __init__(self, images_dir, coco_json_path, classes, transform=None, img_size=(256,256)):
         self.images_dir = images_dir
@@ -99,10 +94,7 @@ class CocoSegDataset(Dataset):
 
         return img, masks_tensor, presence_tensor
 
-
-# =====================================================================
-# MODEL: U-Net + Classification Head
-# =====================================================================
+# Model U-Net Multi-Task
 def conv_block(in_ch, out_ch):
     return nn.Sequential(
         nn.Conv2d(in_ch, out_ch, 3, padding=1),
@@ -113,6 +105,7 @@ def conv_block(in_ch, out_ch):
         nn.ReLU(inplace=True),
     )
 
+# Kelas U-Net Multi-Task
 class UNetMultiTask(nn.Module):
     def __init__(self, in_channels=3, base_c=32, num_classes=11):
         super().__init__()
@@ -176,10 +169,6 @@ class UNetMultiTask(nn.Module):
 
         return seg_logits, cls_logits
 
-
-# =====================================================================
-# LOSS (segmentation BCE + Dice + classification BCE)
-# =====================================================================
 def dice_loss(pred, target, smooth=1):
     pred = torch.sigmoid(pred)
     intersection = (pred * target).sum((2,3))
@@ -187,10 +176,7 @@ def dice_loss(pred, target, smooth=1):
     dice = (2*intersection + smooth) / (union + smooth)
     return 1 - dice.mean()
 
-
-# =====================================================================
-# TRAINING LOOP
-# =====================================================================
+# Fungsi untuk melatih model
 def train_model(train_loader, val_loader, model, device, epochs=20, lr=1e-3, lambda_cls=1.0):
     model.to(device)
     opt = optim.Adam(model.parameters(), lr=lr)
@@ -244,12 +230,10 @@ def train_model(train_loader, val_loader, model, device, epochs=20, lr=1e-3, lam
             print("✓ Saved best model")
 
 
-# =====================================================================
-# MAIN
-# =====================================================================
 if __name__ == "__main__":
-    IMAGES_DIR = r"E:\PCD4\train_buah"
-    COCO_JSON = r"E:\PCD4\train_buah\_annotations.coco.json"
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    IMAGES_DIR = os.path.normpath(os.path.join(script_dir, "..", "..", "train_buah"))
+    COCO_JSON = os.path.normpath(os.path.join(script_dir, "..", "..", "train_buah", "_annotations.coco.json"))
 
     CLASSES = [
         "Fruits","Apple","Banana","Grapes","Kiwi",

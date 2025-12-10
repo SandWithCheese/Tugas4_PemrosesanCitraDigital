@@ -263,7 +263,7 @@ class MultiAppGUI:
         self.preview_result_label = tk.Label(
             self.content_frame,
             text="",
-            font=("Segoe UI", 15, "bold"),
+            font=("Segoe UI",40, "bold"),
             bg="#1A1A1A",
             fg="#2ECC71",
             wraplength=815,
